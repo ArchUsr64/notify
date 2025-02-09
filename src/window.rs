@@ -1,5 +1,4 @@
 use crate::app::App;
-use log::{log_enabled, Level};
 use smithay_client_toolkit::{
 	compositor::{CompositorHandler, CompositorState},
 	delegate_compositor, delegate_keyboard, delegate_layer, delegate_output, delegate_pointer,
@@ -165,10 +164,7 @@ impl LayerShellHandler for Window {
 		configure: LayerSurfaceConfigure,
 		_serial: u32,
 	) {
-		if configure.new_size.0 == 0 || configure.new_size.1 == 0 {
-			self.width = self.width;
-			self.height = self.height;
-		} else {
+		if configure.new_size.0 != 0 && configure.new_size.1 != 0 {
 			self.width = configure.new_size.0;
 			self.height = configure.new_size.1;
 		}
@@ -237,7 +233,7 @@ impl KeyboardHandler for Window {
 		_: &Connection,
 		_: &QueueHandle<Self>,
 		_: &wl_keyboard::WlKeyboard,
-		surface: &wl_surface::WlSurface,
+		_: &wl_surface::WlSurface,
 		_: u32,
 		_: &[u32],
 		_: &[Keysym],
@@ -249,7 +245,7 @@ impl KeyboardHandler for Window {
 		_: &Connection,
 		_: &QueueHandle<Self>,
 		_: &wl_keyboard::WlKeyboard,
-		surface: &wl_surface::WlSurface,
+		_: &wl_surface::WlSurface,
 		_: u32,
 	) {
 	}
@@ -260,7 +256,7 @@ impl KeyboardHandler for Window {
 		_qh: &QueueHandle<Self>,
 		_: &wl_keyboard::WlKeyboard,
 		_: u32,
-		event: KeyEvent,
+		_: KeyEvent,
 	) {
 	}
 

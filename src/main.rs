@@ -21,8 +21,8 @@ fn main() {
 	let mut args = env::args();
 	let popup_delay = args
 		.nth(1)
-		.and_then(|i| u64::from_str_radix(&i, 10).ok())
-		.map(|i| Duration::from_secs(i))
+		.and_then(|i| i.parse::<u64>().ok())
+		.map(Duration::from_secs)
 		.unwrap_or_else(|| {
 			error!(
 				r#"Invalid usage

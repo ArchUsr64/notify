@@ -24,8 +24,7 @@ impl Font {
 		let mut glyphs_original: [[Vec<Gray<u8>>; 32]; 3] = Default::default();
 		for (j, row) in glyphs_original.iter_mut().enumerate() {
 			for (i, glyph) in row.iter_mut().enumerate() {
-				let top_left = i as usize * glyph_original_size.0
-					+ j as usize * glyph_original_size.1 * image_width;
+				let top_left = i * glyph_original_size.0 + j * glyph_original_size.1 * image_width;
 				for j in 0..glyph_original_size.1 {
 					for i in 0..glyph_original_size.0 {
 						let pixel_value = pixel_data[top_left + i + j * image_width];

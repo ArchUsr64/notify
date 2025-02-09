@@ -1,5 +1,4 @@
 use crate::fonts::Font;
-use log::{debug, log_enabled, Level};
 
 /// Responsible for event handling and drawing to screen
 pub struct App {
@@ -12,7 +11,7 @@ impl App {
 	pub fn new(font: Font, text: String) -> Self {
 		App { font, text }
 	}
-	pub fn draw(&mut self, canvas: &mut [u8], width: u32, height: u32) {
+	pub fn draw(&mut self, canvas: &mut [u8], width: u32, _height: u32) {
 		// 24-bit colors in ARGB format
 		const BACKGROUND: u32 = 0xff000000;
 		canvas.chunks_exact_mut(4).for_each(|chunk| {
@@ -28,7 +27,7 @@ impl App {
 			for j in 0..self.font.height {
 				for i in 0..self.font.width {
 					let index = top_left + 4 * (i + j * width as usize);
-					let mut pixel_value = glyph[i + j * self.font.width];
+					let pixel_value = glyph[i + j * self.font.width];
 					canvas[index] = pixel_value;
 					canvas[index + 1] = pixel_value;
 					canvas[index + 2] = pixel_value;
