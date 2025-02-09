@@ -5,15 +5,11 @@ use log::{debug, log_enabled, Level};
 pub struct App {
 	// Some internal state
 	font: Font,
-	running: bool,
 }
 
 impl App {
 	pub fn new(font: Font) -> Self {
-		App {
-			font,
-			running: true,
-		}
+		App { font }
 	}
 	pub fn draw(&mut self, canvas: &mut [u8], width: u32, height: u32) {
 		let line_count = height as usize / self.font.height;
@@ -47,12 +43,6 @@ impl App {
 		};
 		draw_line(0, "Demo", false);
 		// TODO: Handle text and cursor rendering when the text width is greater than canvas width
-	}
-	pub fn running(&self) -> bool {
-		self.running
-	}
-	pub fn close(&mut self) {
-		self.running = false;
 	}
 	pub fn exit(&self) {
 		std::process::exit(0);

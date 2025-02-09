@@ -154,7 +154,7 @@ impl OutputHandler for Window {
 
 impl LayerShellHandler for Window {
 	fn closed(&mut self, _conn: &Connection, _qh: &QueueHandle<Self>, _layer: &LayerSurface) {
-		self.app.close();
+		self.app.exit();
 	}
 
 	fn configure(
