@@ -1,6 +1,10 @@
 use crate::app::App;
+use atty::Stream;
 use fonts::Font;
-use log::debug;
+use log::{debug, error};
+use std::env;
+use std::str::FromStr;
+use std::time::{Duration, Instant};
 use window::Window;
 
 mod app;
@@ -8,22 +12,39 @@ mod fonts;
 mod window;
 
 const FONT_SIZE: usize = 30;
+const DEFAULT_DELAY: Duration = Duration::from_secs(5);
 const WINDOW_SIZE: (usize, usize) = (4, 2);
 
 fn main() {
 	env_logger::init();
 
 	let font = Font::from_pbm(include_bytes!("./res/font_atlas.pbm"), FONT_SIZE).unwrap();
-	let glyph = font.get_glyph('a').unwrap();
-	let mut glyph_render = String::new();
-	for i in 0..FONT_SIZE {
-		for j in 0..FONT_SIZE / 2 {
-			let char = glyph[i * FONT_SIZE / 2 + j];
-			glyph_render.push_str(&format!("{:02x}", char));
-		}
-		glyph_render.push_str(&"\n");
-	}
-	debug!("{glyph_render}");
+	let mut args = env::args();
+	let popup_delay = args
+		.nth(1)
+		.and_then(|i| u64::from_str_radix(&i, 10).ok())
+		.map(|i| Duration::from_secs(i))
+		.unwrap_or_else(|| {
+			error!(
+				r#"Invalid usage
+Correct Usage: notify <time in seconds>
+eg: 'notify 5'"#
+			);
+			DEFAULT_DELAY
+		});
+	debug!("Popup Delay: {:?}", popup_delay);
+
+	let display_text = if atty::is(Stream::Stdin) {
+		let mut buf = String::new();
+		let stdin = std::io::stdin();
+		stdin.read_line(&mut buf).unwrap();
+		buf
+	} else {
+		String::from_str(
+			"[Placeholder text] pipe into notify to display custom text eg: 'echo hello | notify'",
+		)
+		.unwrap()
+	};
 
 	let (mut window, mut event_queue) = Window::new(
 		(WINDOW_SIZE.0 * FONT_SIZE / 2) as u32,
@@ -32,11 +53,11 @@ fn main() {
 		App::new(font),
 	);
 
+	let start = Instant::now();
 	loop {
 		event_queue.blocking_dispatch(&mut window).unwrap();
 
-		if !window.app.running() {
-			debug!("exiting example");
+		if start.elapsed() > popup_delay {
 			break;
 		}
 	}
