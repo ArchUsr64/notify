@@ -13,7 +13,7 @@ use smithay_client_toolkit::{
 	},
 	shell::{
 		wlr_layer::{
-			KeyboardInteractivity, Layer, LayerShell, LayerShellHandler, LayerSurface,
+			Anchor, KeyboardInteractivity, Layer, LayerShell, LayerShellHandler, LayerSurface,
 			LayerSurfaceConfigure,
 		},
 		WaylandSurface,
@@ -63,6 +63,7 @@ impl Window {
 			layer_shell.create_layer_surface(&qh, surface, Layer::Overlay, Some("notify"), None);
 		layer.set_keyboard_interactivity(KeyboardInteractivity::OnDemand);
 		layer.set_size(width, height);
+		layer.set_anchor(Anchor::TOP | Anchor::RIGHT);
 		layer.commit();
 
 		let pool = SlotPool::new((width * height * 4) as usize, &shm)
