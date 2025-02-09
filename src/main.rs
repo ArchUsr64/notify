@@ -1,9 +1,14 @@
+use crate::app::App;
 use fonts::Font;
 use log::debug;
+use window::Window;
 
+mod app;
 mod fonts;
+mod window;
 
 const FONT_SIZE: usize = 30;
+const WINDOW_SIZE: (usize, usize) = (4, 2);
 
 fn main() {
 	env_logger::init();
@@ -19,4 +24,22 @@ fn main() {
 		glyph_render.push_str(&"\n");
 	}
 	debug!("{glyph_render}");
+
+	let (mut window, mut event_queue) = Window::new(
+		(WINDOW_SIZE.0 * FONT_SIZE / 2) as u32,
+		// +2 for rendering the top and bottom borders (1px each)
+		(WINDOW_SIZE.1 * FONT_SIZE) as u32 + 2,
+		App::new(font),
+	);
+
+	loop {
+		event_queue.blocking_dispatch(&mut window).unwrap();
+
+		if !window.app.running() {
+			debug!("exiting example");
+			break;
+		}
+	}
+
+	window.app.exit();
 }
