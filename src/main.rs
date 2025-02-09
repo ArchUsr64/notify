@@ -13,7 +13,6 @@ mod window;
 
 const FONT_SIZE: usize = 30;
 const DEFAULT_DELAY: Duration = Duration::from_secs(5);
-const WINDOW_SIZE: (usize, usize) = (4, 2);
 
 fn main() {
 	env_logger::init();
@@ -32,9 +31,8 @@ eg: 'notify 5'"#
 			);
 			DEFAULT_DELAY
 		});
-	debug!("Popup Delay: {:?}", popup_delay);
 
-	let display_text = if atty::is(Stream::Stdin) {
+	let display_text = if atty::isnt(Stream::Stdin) {
 		let mut buf = String::new();
 		let stdin = std::io::stdin();
 		stdin.read_line(&mut buf).unwrap();
@@ -45,12 +43,16 @@ eg: 'notify 5'"#
 		)
 		.unwrap()
 	};
+	debug!(
+		"Popup Delay: {:?}, Display Text: '{display_text}'",
+		popup_delay
+	);
 
 	let (mut window, mut event_queue) = Window::new(
-		(WINDOW_SIZE.0 * FONT_SIZE / 2) as u32,
+		(display_text.len() * FONT_SIZE / 2) as u32,
 		// +2 for rendering the top and bottom borders (1px each)
-		(WINDOW_SIZE.1 * FONT_SIZE) as u32 + 2,
-		App::new(font),
+		FONT_SIZE as u32 + 2,
+		App::new(font, display_text),
 	);
 
 	let start = Instant::now();
